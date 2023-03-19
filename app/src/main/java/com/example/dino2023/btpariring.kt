@@ -13,12 +13,13 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import org.w3c.dom.Text
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
-
-
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.RecyclerView
 
 
 class Btpairing : AppCompatActivity() {
@@ -32,7 +33,7 @@ class Btpairing : AppCompatActivity() {
     private val isBluetoothEnabled: Boolean
         get() = bluetoothAdapter?.isEnabled == true
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,6 +50,7 @@ class Btpairing : AppCompatActivity() {
         setContentView(R.layout.pairing)
         val serverbutton:Button = findViewById(R.id.server)
         val scanbutton:Button = findViewById(R.id.scan)
+        val paired : RecyclerView = findViewById(R.id.paired)
 
         val backbutton: Button = findViewById(R.id.back2)
         val layout : FrameLayout = findViewById(R.id.mainlayout)
@@ -92,6 +94,14 @@ class Btpairing : AppCompatActivity() {
                 )
             )
         }
+
+
+        val badapter = BluetoothAdapter.getDefaultAdapter()
+        if (badapter.isEnabled) {
+            val devices = badapter.bondedDevices
+        }
+
+
 
 
 
