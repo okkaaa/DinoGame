@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout-land/activity_main.xml" value="0.48721340388007056" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout-land/amin.xml" value="0.48676081200353044" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout-land/level_layout.xml" value="0.18771929824561404" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout-land/levelselect.xml" value="0.2777777777777778" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout-land/pairing.xml" value="0.22" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout/activity_main.xml" value="0.4724241128687473" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout/level.xml" value="0.5317028985507246" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout/level_layout.xml" value="0.5317028985507246" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout/levelselect.xml" value="0.5317028985507246" />
+        <entry key="..\:/Users/okka2/AndroidStudioProjects/Dino2023/app/src/main/res/layout/pairing.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
