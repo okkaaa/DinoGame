@@ -39,7 +39,7 @@
             android:background="@color/teal_700"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="Scan"
+            android:text="Refresh"
             app:backgroundTint="@color/teal_200"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,6 +62,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:translationX="400dp"
+            android:translationY="200dp" />
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

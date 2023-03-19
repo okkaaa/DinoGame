@@ -18,6 +18,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 
@@ -49,8 +50,10 @@ class Btpairing : AppCompatActivity() {
 
         setContentView(R.layout.pairing)
         val serverbutton:Button = findViewById(R.id.server)
-        val scanbutton:Button = findViewById(R.id.scan)
+        val refbutton:Button = findViewById(R.id.scan)
         val paired : RecyclerView = findViewById(R.id.paired)
+
+
 
         val backbutton: Button = findViewById(R.id.back2)
         val layout : FrameLayout = findViewById(R.id.mainlayout)
@@ -66,6 +69,15 @@ class Btpairing : AppCompatActivity() {
             }
             true
         }
+        refbutton.setOnTouchListener{ _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                finish();
+                startActivity(getIntent());
+            }
+            true
+        }
+
+
 
 
         val enableBluetoothLauncher = registerForActivityResult(
@@ -95,11 +107,20 @@ class Btpairing : AppCompatActivity() {
             )
         }
 
-
+        val tv : TextView = findViewById(R.id.tv)
         val badapter = BluetoothAdapter.getDefaultAdapter()
         if (badapter.isEnabled) {
             val devices = badapter.bondedDevices
+
+            for (i in devices){
+                val name = i.name
+                val address = i.address
+                tv.append("\n $name")
+            }
         }
+
+
+
 
 
 
