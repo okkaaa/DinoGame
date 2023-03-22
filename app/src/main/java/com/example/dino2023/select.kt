@@ -164,7 +164,7 @@ suspend fun readData(socket: BluetoothSocket): String {
 suspend fun writeData(socket: BluetoothSocket, data: ByteArray) {
     return withContext(Dispatchers.IO) {
         val outputStream: OutputStream = socket.outputStream
-        outputStream.write(1)
+        outputStream.write(data)
         outputStream.flush()
     }
 }
