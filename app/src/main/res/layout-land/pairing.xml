@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".Btpairing">
 
     <FrameLayout
         android:id="@+id/mainlayout"
@@ -15,6 +16,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <Button
+            android:id="@+id/pair"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="100dp"
+            android:background="@color/teal_700"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Pair"
+            app:backgroundTint="@color/teal_200"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/back2"
@@ -30,7 +45,7 @@
             app:backgroundTint="@color/teal_200" />
 
         <Button
-            android:id="@+id/scan"
+            android:id="@+id/refresh"
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
@@ -64,12 +79,35 @@
             android:layout_gravity="center" />
 
         <TextView
-            android:id="@+id/tv"
-            android:layout_width="wrap_content"
+            android:id="@+id/devicenum"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:translationX="400dp"
-            android:translationY="200dp" />
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="140dp"
+            android:gravity="center_horizontal"
+            android:text="1"
+            android:textColor="@color/teal_200"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/plus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="100dp"
+            android:text="+"
+            app:background="@color/teal_700"
+            app:backgroundTint="@color/teal_200" />
+
+        <Button
+            android:id="@+id/minus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="210dp"
+            android:text="-"
+            app:background="@color/teal_700"
+            app:backgroundTint="@color/teal_200" />
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
