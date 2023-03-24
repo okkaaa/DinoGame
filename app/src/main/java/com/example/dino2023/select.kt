@@ -44,9 +44,6 @@ class Select : AppCompatActivity() {
         var instream: InputStream?
         var outstream: OutputStream?
 
-
-
-
         val decorView = window.decorView
         val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
@@ -133,6 +130,8 @@ class Select : AppCompatActivity() {
         }
     }
 }
+
+
 suspend fun readData(socket: BluetoothSocket): String {
     return withContext(Dispatchers.IO) {
         val inputStream: InputStream = socket.inputStream

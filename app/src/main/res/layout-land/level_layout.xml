@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="bottom"
     android:screenOrientation="landscape"
     tools:context=".MainActivity">
 
@@ -35,6 +36,25 @@
         app:layout_constraintVertical_bias="1.0">
 
         <ImageView
+            android:id="@+id/joystickbackground"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="75dp"
+            android:layout_marginBottom="25dp"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/joysback" />
+
+        <ImageView
+            android:id="@+id/jsprite"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="75dp"
+            android:layout_marginBottom="25dp"
+            app:srcCompat="@drawable/joysback" />
+
+        <ImageView
             android:id="@+id/dragable2"
             android:layout_width="140dp"
             android:layout_height="140dp"
@@ -51,6 +71,14 @@
             android:id="@+id/inviz"
             android:layout_width="40dp"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+        <Button
+            android:id="@+id/inviz2"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:insetTop="0dp"
             android:insetBottom="0dp" />
@@ -178,16 +206,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/dinocharacter2"
         tools:ignore="ImageContrastCheck" />
-
-    <ImageView
-        android:id="@+id/joystickbackground"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginStart="75dp"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/joysback" />
 
     <ImageView
         android:id="@+id/jumpsprite"
