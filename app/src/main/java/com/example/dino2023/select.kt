@@ -14,6 +14,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.example.dino2023.BTMSG.Companion.data
 import com.example.dino2023.Bluetoothsocketholder.Companion.socket
@@ -29,7 +31,7 @@ import java.io.OutputStream
 import java.util.logging.Logger.global
 
 
-
+private var bton = false //if Bluetooth is on
 
 class Select : AppCompatActivity() {
 
@@ -38,7 +40,7 @@ class Select : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.hide()
-        var bton = false
+
         var instream: InputStream?
         var outstream: OutputStream?
 
@@ -54,14 +56,13 @@ class Select : AppCompatActivity() {
         val layout: FrameLayout = findViewById(R.id.mainlayout1)
         val backbutton: Button = findViewById(R.id.back)
         val button1: Button = findViewById(R.id.level1)
+        val button2: Button = findViewById(R.id.level2)
 
         val tv : TextView = findViewById(R.id.textView2)
-        val extras = intent.extras
+
+
         if (Bluetoothsocketholder.socket != null) {
             bton = true
-
-            val socket = Bluetoothsocketholder.socket
-
         }
 
 
@@ -73,82 +74,62 @@ class Select : AppCompatActivity() {
         }
         button1.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-
-                if (bton) {
-                    GlobalScope.launch {
-                        try {
-                            val data = "hello".toByteArray()
-                            writeData(socket!!, data)
-                        } catch (e: IOException) {
-                            Log.e("TAG", "Error writing to Bluetooth socket", e)
-                        }
-                    }
+                if (bton){
+                    buttonpressbt(1)
                 }
                 val intent = Intent(this@Select, Level::class.java)
+                intent.putExtra("level", 1)
                 startActivity(intent)
             }
             true
         }
+        button2.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (bton){
+                    buttonpressbt(2)
+                }
+                val intent = Intent(this@Select, Level::class.java)
+                intent.putExtra("level", 2)
+                startActivity(intent)
+            }
+            true
+        }
+
         layout.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 decorView.setSystemUiVisibility(uiOptions)
             }
             true
         }
+
         if (bton){
-            /*GlobalScope.launch {
-                var shouldloop: Boolean = true
-                /* (shouldloop) {
-                    try {
-                        val data = readData(socket!!)
-                        val stringdata = data.toString()
-                        shouldloop = false
-
-
-                    } catch (e: IOException) {
-                        Log.e("TAG", "Error reading Bluetooth socket", e)
-                    }
-                }*/
-                val buffer = ByteArray(1024)
-                while(shouldloop) {
-                    val byteCount = try {
-                        socket!!.inputStream.read(buffer)
-                        val t = buffer.decodeToString()
-                        tv.text = t
-                    } catch (e: IOException) {
-                        Log.d("TAG", "Input stream was disconnected", e)
-
-                    }
-                }
-            }*/
             GlobalScope.launch {
                 var shouldLoop = true
                 while (shouldLoop) {
                     try {
-                        val data = withContext(Dispatchers.IO){readData(socket!!)}
-                        BTMSG.data = data
-
-
+                        val data = withContext(Dispatchers.IO) { readData(socket!!) }
+                        BTMSG.data = data.toInt()
                     } catch (e: IOException) {
                         Log.e("TAG", "Error reading Bluetooth socket", e)
                         shouldLoop = false
                     }
                 }
+
             }
             GlobalScope.launch {
                 var shouldloop2 = true
-                while (shouldloop2){
-                    if (BTMSG.data != null){
-                        val datastring : String = BTMSG.data!!
+                while (shouldloop2) {
+                    if (BTMSG.data != null) {
+                        val dataInt: Int = BTMSG.data!!
                         shouldloop2 = false
                     }
                 }
-                runOnUiThread { tv.text = BTMSG.data!! }
-
+                runOnUiThread {
+                    val intent = Intent(this@Select, Level::class.java)
+                    intent.putExtra("level", BTMSG.data)
+                    startActivity(intent)
+                }
             }
-
-
-
         }
     }
 }
@@ -168,25 +149,18 @@ suspend fun writeData(socket: BluetoothSocket, data: ByteArray) {
         outputStream.flush()
     }
 }
-fun listenForIncomingMessages(socket: BluetoothSocket): Flow<String> {
-    return flow {
-        if(!socket!!.isConnected) {
-            return@flow
-        }
-        val buffer = ByteArray(1024)
-        while(true) {
-            val byteCount = try {
-                socket!!.inputStream.read(buffer)
-            } catch(e: IOException) {
-                Log.d("TAG", "Input stream was disconnected", e)
 
-            }
-            emit(
-                buffer.decodeToString(endIndex = byteCount)
-
-            )
+fun buttonpressbt (n: Int) {
+    GlobalScope.launch {
+        try {
+            val str : String = n.toString()
+            val data = str.toByteArray()
+            writeData(socket!!, data)
+        } catch (e: IOException) {
+            Log.e("TAG", "Error writing to Bluetooth socket", e)
         }
-    }.flowOn(Dispatchers.IO)
+    }
 }
+
 
 

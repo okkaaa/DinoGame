@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothSocket
 
 class BTMSG {
     companion object {
-        var data: String? = null
+        var data: Int? = null
 
     }
 }

@@ -234,8 +234,7 @@ public class Btpairing : AppCompatActivity() {
 
                         Bluetoothsocketholder.socket = socket
                         val intent = Intent(this@Btpairing, Select::class.java)
-                        intent.putExtra("btsocket", true)
-                        intent.putExtra("server", true)
+
                         startActivity(intent)
                     }
                 }
