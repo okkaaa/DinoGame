@@ -179,7 +179,7 @@
         app:srcCompat="@drawable/jumpbutton" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/restartsprite"
         android:layout_width="80dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"

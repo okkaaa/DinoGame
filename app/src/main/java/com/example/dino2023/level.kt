@@ -1,29 +1,51 @@
 package com.example.dino2023
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothSocket
+import android.content.Context
+import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RectShape
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.marginBottom
+import com.example.dino2023.BTMSG.Companion.data
+import kotlinx.coroutines.*
+import java.io.*
 
-val level1x = arrayOf(7, 8, 11, 12, 13, 14, 15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 10, 13, 15, 14, 16, 17, 19, 20, 17, 18, 21, 17, 20, 22, 21, 23, 24, 25, 25, 25, 25, 25, 25, 29, 32, 33, 35, 36, 38, 39, 41, 42, 44, 47, 49, 51, 55, 57, 59, 60, 61, 63, 64, 67, 68, 70, 70, 70, 70, 70, 70, 70, 71, 72, 73, 74, 75, 76, 76, 74, 75, 73, 72, 71, 69, 25, 25, 25)
-val level1y = arrayOf(8, 8, 8, 8, 8, 8, 8, 12, 8, 7, 6, 5, 4, 3, 2, 1, 0, 10, 12, 11, 11, 11, 12, 12, 10, 10, 7, 7, 8, 4, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 11, 11, 11, 9, 9, 7, 7, 5, 5, 3, 4, 5, 3, 4, 6, 10, 10, 10, 8, 8, 7, 7, 3, 4, 5, 6, 7, 8, 9, 3, 3, 3, 3, 3, 3, 9, 9, 9, 9, 9, 9, 5, 9, 10, 11)
 
 private var bton = false // if Bluetooth is on
+private var friendx: Int = 0
+private var friendy: Int = 0
+private var friendorientright = true
+private var mydinoorientright = true
+
+
 
 class Level : AppCompatActivity() {
+
+
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,28 +60,84 @@ class Level : AppCompatActivity() {
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenheight = displayMetrics.heightPixels
-        val screenwidth = displayMetrics.widthPixels
 
-        val unit = screenheight / 11
+        val Levelscope = CoroutineScope(Dispatchers.Main)
+
+
+
+        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        val screenwidth: Int
+        val screenheight: Int
+
+        if (Build.VERSION_CODES.R <= android.os.Build.VERSION.SDK_INT) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+            val layoutAttr = window.attributes
+            layoutAttr.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            window.attributes = layoutAttr
+
+            val display = windowManager.currentWindowMetrics
+            screenheight = display.bounds.height()
+            screenwidth = display.bounds.width()
+
+
+        }
+        else {
+            screenheight = displayMetrics.heightPixels
+            screenwidth = displayMetrics.widthPixels
+        }
+
+
+        val unit = screenwidth / 24
+
+
+
+        val restartbutton: Button = findViewById(R.id.restart)
+        val jumpbutton: Button = findViewById(R.id.jumpbutton)
+        val stopaccidentbutton: Button = findViewById(R.id.stopaccidentbutton)
+        val backbutton: Button = findViewById(R.id.back1)
+        val fl: FrameLayout = findViewById(R.id.layout3)
+
 
         val dinoview : ImageView = findViewById(R.id.dinoright)
         val dinoparams = dinoview.layoutParams
         dinoparams.width = unit
         dinoparams.height = unit
+
+        val dinofriendview : ImageView = findViewById(R.id.dinopurple)
+        dinofriendview.layoutParams = dinoparams
+
+
+        dinoview.x = (11.5 * unit).toFloat()
+        dinoview.y = (5 * unit).toFloat()
         dinoview.layoutParams = dinoparams
 
-        val levelnum : Int = intent.getIntExtra("level", -1)
-        var startpoint: Int = 0
+        val levelnum : Int = intent.getIntExtra("level", 1)
 
 
+        val colour = "#c2b280"
         var moveright = false
         var moveleft = false
         var slightright = false
         var slightleft = false
+        var fall = true
+        var jump = false
+        var canjump = true
+
+
         var magnitude = 0
+        var timefallen = 1
+        var jumptime = 0
+        var startpoint: Int = 0
+        var location = 0
+        var height = 0
+
 
         val tv2 : TextView = findViewById(R.id.textView)
+
 
 
         if (Bluetoothsocketholder.socket != null) {
@@ -67,47 +145,240 @@ class Level : AppCompatActivity() {
         }
 
 
-
         val joystickbackground : ImageView = findViewById(R.id.joystickbackground)
         val jsprite : ImageView = findViewById(R.id.jsprite)
         val backimage: View = findViewById(R.id.backimage)
-        val fl: FrameLayout = findViewById(R.id.layout3)
+
+
+        val platformlistx = getlayoutx(levelnum)
+        val platformlisty = getlayouty(levelnum)
+        val indexes = platformlistx.size
+
+
+        val uptimer : CountDownTimer = object : CountDownTimer(Long.MAX_VALUE, 15) {
+            override fun onTick(l: Long){
+                val bitmap: Bitmap = Bitmap.createBitmap(screenwidth, screenheight, Bitmap.Config.ARGB_8888)
+                val canvas: Canvas = Canvas(bitmap)
+                backimage.background = BitmapDrawable(getResources(), bitmap)
+                val rectlist : MutableList<ShapeDrawable> = ArrayList()
+                val previousheight = height
+                val previouslocation = location
+                if (bton) {
+                    dinofriendview.x = (-friendx + location + 11.5*unit).toFloat()
+                    dinofriendview.y = (-friendy + height + 5*unit).toFloat()
+                    if (friendorientright){
+                        dinofriendview.rotationY = 0F
+                    }
+                    else {
+                        dinofriendview.rotationY = 180F
+                    }
+                }
+
+
+                if (jump) {
+                    jumptime++
+                    height += (40/jumptime+2) +20
+                    if (jumptime > 8){
+                        jump = false
+                    }
+
+                }
+                for (i in 0 until indexes) {
+                    val left = platformlistx[i] * unit + previouslocation
+                    val top = platformlisty[i] * unit + previousheight
+                    val right = left + unit
+                    val bottom = top + unit
+                    var toptest = platformlisty[i] * unit + height
+                    val lefttest = platformlistx[i] * unit + location
+                    var shapeDrawable: ShapeDrawable
+                    shapeDrawable = ShapeDrawable(RectShape())
 
 
 
 
-        tv2.text = screenheight.toString()
+                    //topcollision
+                    if (lefttest<12.3*unit && lefttest>10.7*unit && toptest > 3.99 *unit && toptest < 5*unit) {
+                        height = (4 - platformlisty[i]) * unit
+                        toptest =  platformlisty[i] * unit + height - 30
+                    }
 
-        val jumpbutton: Button = findViewById(R.id.jumpbutton)
-        val stopaccidentbutton: Button = findViewById(R.id.stopaccidentbutton)
-        val restartbutton: Button = findViewById(R.id.restart)
-        val backbutton: Button = findViewById(R.id.back1)
+                    //bottomcollision
+                    if (lefttest<12.5*unit - 2 && lefttest > 10.5*unit + 2 && toptest > 5*unit && toptest < 6*unit) {
+                        if (timefallen == 0) {
+                            fall = false
+                            canjump = true
+                        }
+                        if (lefttest < 12.3 * unit - 3 && lefttest > 10.7 * unit + 3 && toptest > 5 * unit && top < 6 * unit){
+                            height = (6 - platformlisty[i]) * unit -1
+                            timefallen = 0
+                            fall = false
+                            canjump = true
+
+                        }
+                        toptest = platformlisty[i] * unit + height +20
+                    }
+                    //leftcollision
+                    if (lefttest<11.5*unit && lefttest>10.5*unit && toptest > 4.3*unit && toptest < 5.8*unit) {
+                        moveleft = false
+                        slightleft = false
+                        location = (11 - platformlistx[i]) * unit - unit/2 + 1
 
 
-        backbutton.setOnTouchListener { _, event ->
+                    }
+                    //rightcollision
+                    if (lefttest<12.5*unit && lefttest>11.5*unit && toptest > 4.3*unit && toptest < 5.8*unit) {
+                        moveright = false
+                        slightright = false
+                        location = (12 - platformlistx[i]) * unit + unit/2 - 1
+
+                    }
+
+
+                    shapeDrawable.setBounds( left, top, right, bottom)
+                    shapeDrawable.getPaint().setColor(Color.parseColor(colour))
+                    rectlist.add(shapeDrawable)
+
+
+                }
+                for (j in rectlist){
+                    j.draw(canvas)
+                }
+
+                if (moveleft) {
+                    location+= 14
+                    dinoview.rotationY = 180F
+                    mydinoorientright = false
+
+                }
+                else if(slightleft) {
+                    location -= magnitude
+                    dinoview.rotationY = 180F
+                    mydinoorientright = false
+                }
+                if (moveright) {
+                    location-= 14
+                    dinoview.rotationY = 0F
+                    mydinoorientright = true
+                }
+                else if(slightright) {
+                    location -= magnitude
+                    dinoview.rotationY = 0F
+                    mydinoorientright = true
+                }
+
+
+
+                if (fall) {
+                    timefallen++
+                    if (timefallen < 25) {
+                        height -= (timefallen+2) * (timefallen+2) / 30 + 3
+                    }
+                    else{
+                        height -= 24
+                    }
+                }
+                fall = true
+
+            }
+            override fun onFinish() {
+            }
+        }
+
+        uptimer.start()
+
+
+
+
+
+        if (bton){
+            dinofriendview.visibility = View.VISIBLE
+
+
+            Levelscope.launch {
+                var shouldLoop = true
+                while(shouldLoop) {
+                    try {
+
+                        var right = "1"
+                        if (!mydinoorientright){
+                            right = "0"
+                        }
+                        val data = "$right,$location,$height,3,".toByteArray()
+                        writeData(Bluetoothsocketholder.socket!!, data)
+                    } catch (e: IOException) {
+                        Log.e("TAG", "Error writing to Bluetooth socket", e)
+                        shouldLoop = false
+                    }
+                    delay(20)
+                }
+
+            }
+
+            Levelscope.launch {
+                var shouldLoop2 = true
+                while (shouldLoop2) {
+                    try {
+                        val coordstring = withContext(Dispatchers.IO) { readData(Bluetoothsocketholder.socket!!) }
+                        val strparts = coordstring.split(",")
+
+                        if (strparts.size == 5 && strparts[0].length == 1 && strparts[3] == "3"){
+                            friendorientright = strparts[0].toInt() == 1
+                            friendx = (strparts[1].toInt())
+                            friendy = (strparts[2].toInt())
+                        }
+                        else{
+                            continue
+                        }
+
+                    } catch (e: IOException) {
+                        Log.e("TAG", "Error reading Bluetooth socket", e)
+                        shouldLoop2 = false
+                    }
+
+
+                }
+
+            }
+
+        }
+
+
+
+
+        jumpbutton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                finish()
+                decorView.setSystemUiVisibility(uiOptions)
+                if (canjump){
+                    jump = true
+                    jumptime = 0
+                    if (timefallen > 2){
+                        canjump = false
+                    }
+                    timefallen = 0
+                }
+
             }
             true
         }
 
-        val text1:TextView = findViewById(R.id.textView3)
+        restartbutton.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                decorView.setSystemUiVisibility(uiOptions)
+                location = 0
+                height = 0
+            }
+            true
+        }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        backbutton.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                Levelscope.cancel()
+                finish()
+            }
+            true
+        }
 
 
 
@@ -187,6 +458,28 @@ class Level : AppCompatActivity() {
 
 
 
+
+    }
+}
+
+/*private fun <A, B> Pair<A, B>.toByteArray(): ByteArray {
+    val bos = ByteArrayOutputStream()
+    ObjectOutputStream(bos).use { it.writeObject(this) }
+    return bos.toByteArray()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T1, T2> ByteArray.toPair(): Pair<T1, T2> {
+    val bis = ByteArrayInputStream(this)
+    return ObjectInputStream(bis).use { it.readObject() as Pair<T1, T2> }
+}*/
+
+
+
+suspend fun writeData2(socket: BluetoothSocket, data: ByteArray) {
+    return withContext(Dispatchers.IO) {
+        val outputStream: OutputStream = socket.outputStream
+        outputStream.write(data)
 
     }
 }

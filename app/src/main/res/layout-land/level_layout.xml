@@ -9,18 +9,6 @@
     tools:context=".MainActivity">
 
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="729dp"
-        android:layout_height="365dp"
-        android:rotation="0"
-        android:scaleX="1.4"
-        android:scaleY="1.4"
-        android:visibility="gone"
-        app:srcCompat="@drawable/paint2"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="44dp" />
-
     <FrameLayout
         android:id="@+id/layout3"
         android:layout_width="0dp"
@@ -34,38 +22,6 @@
         app:layout_constraintStart_toStartOf="@+id/backimage"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-
-        <ImageView
-            android:id="@+id/joystickbackground"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_gravity="bottom|left"
-            android:layout_marginLeft="75dp"
-            android:layout_marginBottom="25dp"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/joysback" />
-
-        <ImageView
-            android:id="@+id/jsprite"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_gravity="bottom|left"
-            android:layout_marginLeft="75dp"
-            android:layout_marginBottom="25dp"
-            app:srcCompat="@drawable/joysback" />
-
-        <ImageView
-            android:id="@+id/dragable2"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_gravity="bottom|left"
-            android:layout_marginLeft="75dp"
-            android:layout_marginBottom="25dp"
-            android:foreground="@drawable/joysticksprite"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:shape="rectangle"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/inviz"
@@ -84,7 +40,7 @@
             android:insetBottom="0dp" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/Backsprite"
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:layout_gravity="top|left"
@@ -93,16 +49,23 @@
             android:scaleX="2"
             app:srcCompat="@drawable/jumpbutton" />
 
-        <Button
-            android:id="@+id/back1"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/transparent"
-            android:gravity="top|left"
-            android:insetTop="0dp"
-            android:insetBottom="0dp" />
+        <ImageView
+            android:id="@+id/dinoright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="0"
+            android:visibility="visible"
+            app:srcCompat="@drawable/dinoshorttail3"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/dinopurple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="0"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/dinopurple"
+            tools:ignore="ImageContrastCheck" />
 
     </FrameLayout>
 
@@ -112,6 +75,42 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="44dp" />
+
+    <Button
+        android:id="@+id/back1"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:gravity="top|left"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/jsprite"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_gravity="bottom|left"
+        android:layout_marginStart="75dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/joysback" />
+
+    <ImageView
+        android:id="@+id/joystickbackground"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_gravity="bottom|left"
+        android:layout_marginStart="75dp"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/joysback" />
 
     <Button
         android:id="@+id/stopaccidentbutton"
@@ -170,44 +169,6 @@
         tools:text="3" />
 
     <ImageView
-        android:id="@+id/dinoright"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="3dp"
-        android:rotation="0"
-        android:scaleX="0.64"
-        android:scaleY="0.64"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/backimage"
-        app:layout_constraintEnd_toEndOf="@+id/backimage"
-        app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/dinocharacter2"
-        tools:ignore="ImageContrastCheck" />
-
-    <ImageView
-        android:id="@+id/dinoleft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="3dp"
-        android:rotation="180"
-        android:rotationX="180"
-        android:rotationY="0"
-        android:scaleX="0.64"
-        android:scaleY="0.64"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/backimage"
-        app:layout_constraintEnd_toEndOf="@+id/backimage"
-        app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/dinocharacter2"
-        tools:ignore="ImageContrastCheck" />
-
-    <ImageView
         android:id="@+id/jumpsprite"
         android:layout_width="85dp"
         android:layout_height="85dp"
@@ -218,7 +179,7 @@
         app:srcCompat="@drawable/jumpbutton" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/restartsprite"
         android:layout_width="80dp"
         android:layout_height="40dp"
         android:layout_gravity="right|top"

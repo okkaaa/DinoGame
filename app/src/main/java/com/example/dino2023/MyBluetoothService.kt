@@ -16,40 +16,21 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 
-class MyBluetoothService(
-    private val socket: BluetoothSocket
-) {
-    fun listenForIncomingMessages(): Flow<String> {
-        return flow {
-            if(!socket.isConnected) {
-                return@flow
-            }
-            val buffer = ByteArray(1024)
-            while(true) {
-                val byteCount = try {
-                    socket.inputStream.read(buffer)
-                } catch(e: IOException) {
-                    Log.d("TAG", "Input stream was disconnected", e)
-
-                }
-                emit(
-                    buffer.decodeToString(endIndex = byteCount)
-
-                )
-            }
-        }.flowOn(Dispatchers.IO)
-    }
-
-    suspend fun sendMessage(bytes: ByteArray): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                socket.outputStream.write(bytes)
-            } catch(e: IOException) {
-                e.printStackTrace()
-                return@withContext false
-            }
-
-            true
-        }
+suspend fun readData(socket: BluetoothSocket): String {
+    return withContext(Dispatchers.IO) {
+        val inputStream: InputStream = socket.inputStream
+        val buffer = ByteArray(16)
+        val bytesRead: Int = inputStream.read(buffer)
+        buffer.copyOf(bytesRead).decodeToString()
     }
 }
+
+suspend fun writeData(socket: BluetoothSocket, data: ByteArray) {
+    return withContext(Dispatchers.IO) {
+        val outputStream: OutputStream = socket.outputStream
+        outputStream.write(data)
+        outputStream.flush()
+    }
+}
+
+
