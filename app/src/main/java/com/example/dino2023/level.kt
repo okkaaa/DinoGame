@@ -135,6 +135,13 @@ class Level : AppCompatActivity() {
         var location = 0
         var height = 0
 
+        val tolerance = 55
+        val slighttolerance = 17
+        val maxspeed = 19
+
+        //tolerance = slighttolerance + 2*maxspeed (applies for joystick deadzone)
+
+
 
         val tv2 : TextView = findViewById(R.id.textView)
 
@@ -206,7 +213,7 @@ class Level : AppCompatActivity() {
                     if (lefttest<12.5*unit - 2 && lefttest > 10.5*unit + 2 && toptest > 5*unit && toptest < 6*unit) {
                         if (timefallen == 0) {
                             fall = false
-                            canjump = true
+
                         }
                         if (lefttest < 12.3 * unit - 3 && lefttest > 10.7 * unit + 3 && toptest > 5 * unit && top < 6 * unit){
                             height = (6 - platformlisty[i]) * unit -1
@@ -245,7 +252,7 @@ class Level : AppCompatActivity() {
                 }
 
                 if (moveleft) {
-                    location+= 14
+                    location+= maxspeed
                     dinoview.rotationY = 180F
                     mydinoorientright = false
 
@@ -256,7 +263,7 @@ class Level : AppCompatActivity() {
                     mydinoorientright = false
                 }
                 if (moveright) {
-                    location-= 14
+                    location-= maxspeed
                     dinoview.rotationY = 0F
                     mydinoorientright = true
                 }
@@ -309,7 +316,7 @@ class Level : AppCompatActivity() {
                         Log.e("TAG", "Error writing to Bluetooth socket", e)
                         shouldLoop = false
                     }
-                    delay(20)
+                    delay(15)
                 }
 
             }
@@ -348,13 +355,20 @@ class Level : AppCompatActivity() {
         jumpbutton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 decorView.setSystemUiVisibility(uiOptions)
-                if (canjump){
+                if (canjump && timefallen == 0){
                     jump = true
                     jumptime = 0
-                    if (timefallen > 2){
+
+                    /*if (timefallen > 2){
                         canjump = false
-                    }
+                    }*/
                     timefallen = 0
+                }
+                else if (canjump && timefallen > 2){
+                    jump = true
+                    jumptime = 0
+                    timefallen = 0
+                    canjump = false
                 }
 
             }
@@ -417,8 +431,6 @@ class Level : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_MOVE) {
                 val x_chord = event.x.toInt()
                 val y_chord = event.y.toInt()
-                val tolerance = 55
-                val slighttolerance = 25
 
 
                 if (x_chord > startpoint+tolerance) {
@@ -454,35 +466,10 @@ class Level : AppCompatActivity() {
 
 
 
-
-
-
-
-
     }
 }
 
-/*private fun <A, B> Pair<A, B>.toByteArray(): ByteArray {
-    val bos = ByteArrayOutputStream()
-    ObjectOutputStream(bos).use { it.writeObject(this) }
-    return bos.toByteArray()
-}
 
-@Suppress("UNCHECKED_CAST")
-fun <T1, T2> ByteArray.toPair(): Pair<T1, T2> {
-    val bis = ByteArrayInputStream(this)
-    return ObjectInputStream(bis).use { it.readObject() as Pair<T1, T2> }
-}*/
-
-
-
-suspend fun writeData2(socket: BluetoothSocket, data: ByteArray) {
-    return withContext(Dispatchers.IO) {
-        val outputStream: OutputStream = socket.outputStream
-        outputStream.write(data)
-
-    }
-}
 
 
 
