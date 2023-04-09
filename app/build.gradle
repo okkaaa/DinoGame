@@ -5,16 +5,25 @@ plugins {
 
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\okka2\\Documents\\androidstudio_keystore.jks')
+            keyPassword 'Okka.r001'
+            keyAlias 'key0'
+            storePassword 'Okka.r001'
+        }
+    }
     compileSdk 32
 
     defaultConfig {
         applicationId "com.example.dino2023"
-        minSdk 29
+        minSdk 27
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
 
     }
 

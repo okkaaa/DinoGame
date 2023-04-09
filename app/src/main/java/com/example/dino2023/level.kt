@@ -32,6 +32,7 @@ import androidx.core.view.marginBottom
 import com.example.dino2023.BTMSG.Companion.data
 import kotlinx.coroutines.*
 import java.io.*
+import java.nio.ByteBuffer
 
 
 private var bton = false // if Bluetooth is on
@@ -53,10 +54,7 @@ class Level : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.hide()
 
-        val decorView = window.decorView
-        val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        decorView.setSystemUiVisibility(uiOptions)
+        hidenav(window)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -123,6 +121,7 @@ class Level : AppCompatActivity() {
         var moveleft = false
         var slightright = false
         var slightleft = false
+        var move = false
         var fall = true
         var jump = false
         var canjump = true
@@ -136,16 +135,11 @@ class Level : AppCompatActivity() {
         var height = 0
 
         val tolerance = 55
-        val slighttolerance = 17
-        val maxspeed = 19
-
-        //tolerance = slighttolerance + 2*maxspeed (applies for joystick deadzone)
-
-
+        val slighttolerance = 23
+        val maxspeed = 16
+        //tolerance = slighttolerance + 2*maxspeed (condition for joystick deadzone)
 
         val tv2 : TextView = findViewById(R.id.textView)
-
-
 
         if (Bluetoothsocketholder.socket != null) {
             bton = true
@@ -298,44 +292,48 @@ class Level : AppCompatActivity() {
 
 
         if (bton){
+            var prevsentloc = 0
+            var prevsentheight = 0
             dinofriendview.visibility = View.VISIBLE
-
-
             Levelscope.launch {
                 var shouldLoop = true
                 while(shouldLoop) {
                     try {
-
-                        var right = "1"
-                        if (!mydinoorientright){
-                            right = "0"
+                        if (location != prevsentloc || height != prevsentheight) {
+                            val buffer = ByteBuffer.allocate(8)
+                            buffer.putInt(location * 100 / unit)
+                            buffer.putInt(height * 100 / unit)
+                            val byteArray = buffer.array()
+                            writeData(Bluetoothsocketholder.socket!!, byteArray)
+                            delay(30)
                         }
-                        val data = "$right,$location,$height,3,".toByteArray()
-                        writeData(Bluetoothsocketholder.socket!!, data)
+
                     } catch (e: IOException) {
                         Log.e("TAG", "Error writing to Bluetooth socket", e)
                         shouldLoop = false
                     }
-                    delay(15)
                 }
-
             }
 
             Levelscope.launch {
                 var shouldLoop2 = true
                 while (shouldLoop2) {
                     try {
-                        val coordstring = withContext(Dispatchers.IO) { readData(Bluetoothsocketholder.socket!!) }
-                        val strparts = coordstring.split(",")
+                        val coordbarray = withContext(Dispatchers.IO) { readData(Bluetoothsocketholder.socket!!) }
+                        val buffer = ByteBuffer.wrap(coordbarray)
+                        val readloc = buffer.getInt() * unit / 100
+                        friendy =  buffer.getInt() * unit / 100
 
-                        if (strparts.size == 5 && strparts[0].length == 1 && strparts[3] == "3"){
-                            friendorientright = strparts[0].toInt() == 1
-                            friendx = (strparts[1].toInt())
-                            friendy = (strparts[2].toInt())
+                        if (readloc < friendx){
+                            friendorientright = true
                         }
-                        else{
-                            continue
+                        else if (readloc > friendx) {
+                            friendorientright = false
                         }
+                        friendx = readloc
+
+
+
 
                     } catch (e: IOException) {
                         Log.e("TAG", "Error reading Bluetooth socket", e)
@@ -351,11 +349,10 @@ class Level : AppCompatActivity() {
 
 
 
-
         jumpbutton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
-                if (canjump && timefallen == 0){
+                hidenav(window)
+                if (canjump && timefallen <= 2){
                     jump = true
                     jumptime = 0
 
@@ -377,7 +374,7 @@ class Level : AppCompatActivity() {
 
         restartbutton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
                 location = 0
                 height = 0
             }
@@ -398,7 +395,7 @@ class Level : AppCompatActivity() {
 
         stopaccidentbutton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
             }
             true
         }
@@ -406,7 +403,7 @@ class Level : AppCompatActivity() {
 
         fl.setOnTouchListener { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN)  {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
                 joystickbackground.visibility = View.VISIBLE
                 jsprite.visibility = View.INVISIBLE
 
@@ -431,6 +428,7 @@ class Level : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_MOVE) {
                 val x_chord = event.x.toInt()
                 val y_chord = event.y.toInt()
+                move = true
 
 
                 if (x_chord > startpoint+tolerance) {

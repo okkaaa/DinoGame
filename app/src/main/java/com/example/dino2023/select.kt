@@ -49,16 +49,15 @@ class Select() : AppCompatActivity() {
         var instream: InputStream?
         var outstream: OutputStream?
 
-        val decorView = window.decorView
-        val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        decorView.setSystemUiVisibility(uiOptions)
+
+        hidenav(window)
 
         setContentView(R.layout.levelselect)
         val layout: FrameLayout = findViewById(R.id.mainlayout1)
         val backbutton: Button = findViewById(R.id.back)
         val button1: Button = findViewById(R.id.level1)
         val button2: Button = findViewById(R.id.level2)
+        val button3: Button = findViewById(R.id.level3)
 
         val tv : TextView = findViewById(R.id.textView2)
 
@@ -68,14 +67,10 @@ class Select() : AppCompatActivity() {
         }
 
 
-        backbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        backbutton.setOnClickListener {
                 finish()
-            }
-            true
         }
-        button1.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        button1.setOnClickListener {
                 BTLOOP = false
                 if (bton){
                     buttonpressbt(1)
@@ -83,11 +78,8 @@ class Select() : AppCompatActivity() {
                 val intent = Intent(this@Select, Level::class.java)
                 intent.putExtra("level", 1)
                 startActivity(intent)
-            }
-            true
         }
-        button2.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        button2.setOnClickListener{
                 BTLOOP = false
                 if (bton){
                     buttonpressbt(2)
@@ -95,18 +87,24 @@ class Select() : AppCompatActivity() {
                 val intent = Intent(this@Select, Level::class.java)
                 intent.putExtra("level", 2)
                 startActivity(intent)
-            }
-            true
         }
+        button3.setOnClickListener {
+            BTLOOP = false
+            if (bton){
+                buttonpressbt(3)
+            }
+            val intent = Intent(this@Select, Level::class.java)
+            intent.putExtra("level", 3)
+            startActivity(intent) }
 
         layout.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
             }
             true
         }
 
-        if (bton){
+        /*if (bton){
             selectScope.launch {
                 while (BTLOOP){
                     try {
@@ -130,7 +128,7 @@ class Select() : AppCompatActivity() {
                 }
 
             }
-        }
+        }*/
     }
 }
 fun buttonpressbt (n: Int) {

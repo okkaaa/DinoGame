@@ -25,10 +25,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.hide()
 
-        val decorView = window.decorView
-        val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        decorView.setSystemUiVisibility(uiOptions)
+        //val decorView = window.decorView
+        //val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        //        or View.SYSTEM_UI_FLAG_FULLSCREEN)
+        //decorView.setSystemUiVisibility(uiOptions)
+        hidenav(window)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -41,24 +42,19 @@ class MainActivity : AppCompatActivity() {
         val btbutton : Button =findViewById(R.id.bluetooth)
         layout = findViewById(R.id.mainlayout)
 
-        startbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        startbutton.setOnClickListener {
                 val intent = Intent(this@MainActivity, Select::class.java)
                 startActivity(intent)
-            }
-            true
         }
-        btbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        btbutton.setOnClickListener {
                 val intent = Intent(this@MainActivity, Btpairing::class.java)
                 startActivity(intent)
-            }
-            true
+
         }
 
         layout.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
             }
             true
         }

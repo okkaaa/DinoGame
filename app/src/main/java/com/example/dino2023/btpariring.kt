@@ -64,14 +64,11 @@ public class Btpairing : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.hide()
 
-        val decorView = window.decorView
-        val uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        decorView.setSystemUiVisibility(uiOptions)
+        hidenav(window)
 
 
         setContentView(R.layout.pairing)
-        val serverbutton:Button = findViewById(R.id.server)
+        val serverbutton: Button = findViewById(R.id.server)
         val refbutton:Button = findViewById(R.id.refresh)
         val paired : RecyclerView = findViewById(R.id.paired)
         val plus: Button = findViewById(R.id.plus)
@@ -84,22 +81,21 @@ public class Btpairing : AppCompatActivity() {
         val layout : FrameLayout = findViewById(R.id.mainlayout)
         layout.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                decorView.setSystemUiVisibility(uiOptions)
+                hidenav(window)
             }
             true
         }
-        backbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        backbutton.setOnClickListener {
+                if (Bluetoothsocketholder.socket != null) {
+                    Bluetoothsocketholder.socket!!.close()
+                    Bluetoothsocketholder.socket = null
+                }
                 finish()
-            }
-            true
+
         }
-        refbutton.setOnTouchListener{ _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                finish();
-                startActivity(getIntent());
-            }
-            true
+        refbutton.setOnClickListener{
+                finish()
+                startActivity(getIntent())
         }
 
 
@@ -180,8 +176,7 @@ public class Btpairing : AppCompatActivity() {
             }
             true
         }
-        pairbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        pairbutton.setOnClickListener {
                 /*val intent = Intent(this@Btpairing, Select::class.java)
                 val address = nameList[selected - 1].address
                 intent.putExtra("EXTRA_ADDRESS", address)
@@ -203,16 +198,9 @@ public class Btpairing : AppCompatActivity() {
                     startActivity(intent)
                 }
 
-
-
-
-
-            }
-            true
         }
 
-        serverbutton.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
+        serverbutton.setOnClickListener {
 
                 Toast.makeText(this@Btpairing, "BT connection is being established. If unsuccessful, the game will crash :)", Toast.LENGTH_LONG).show()
                 val mmServerSocket: BluetoothServerSocket? by lazy(LazyThreadSafetyMode.NONE) {
@@ -238,8 +226,7 @@ public class Btpairing : AppCompatActivity() {
                         startActivity(intent)
                     }
                 }
-            }
-            true
+
         }
 
 
