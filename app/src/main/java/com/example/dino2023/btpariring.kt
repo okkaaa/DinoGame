@@ -102,7 +102,7 @@ public class Btpairing : AppCompatActivity() {
 
         val enableBluetoothLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) { /* Not needed */ }
+        ) {}
 
         val permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()

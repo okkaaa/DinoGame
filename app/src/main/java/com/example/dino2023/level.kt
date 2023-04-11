@@ -136,7 +136,9 @@ class Level : AppCompatActivity() {
 
         val tolerance = 55
         val slighttolerance = 23
-        val maxspeed = 16
+        val maxspeed = 16 * unit / 110
+        val maxgravity = 24 * unit / 100
+
         //tolerance = slighttolerance + 2*maxspeed (condition for joystick deadzone)
 
         val tv2 : TextView = findViewById(R.id.textView)
@@ -178,7 +180,7 @@ class Level : AppCompatActivity() {
 
                 if (jump) {
                     jumptime++
-                    height += (40/jumptime+2) +20
+                    height += ((40/jumptime+2) +20) * unit / 100
                     if (jumptime > 8){
                         jump = false
                     }
@@ -272,10 +274,10 @@ class Level : AppCompatActivity() {
                 if (fall) {
                     timefallen++
                     if (timefallen < 25) {
-                        height -= (timefallen+2) * (timefallen+2) / 30 + 3
+                        height -= ((timefallen+2) * (timefallen+2) / 30 + 3) * unit / 100
                     }
                     else{
-                        height -= 24
+                        height -= maxgravity
                     }
                 }
                 fall = true
@@ -437,7 +439,7 @@ class Level : AppCompatActivity() {
                 else if (x_chord > startpoint+slighttolerance)  {
                     moveright = false
                     slightright = true
-                    magnitude = (x_chord - startpoint -slighttolerance) / 2
+                    magnitude = (x_chord - startpoint -slighttolerance) * unit / 110
 
                 }
                 else {
@@ -451,7 +453,7 @@ class Level : AppCompatActivity() {
                 else if (x_chord < startpoint-slighttolerance) {
                     moveleft = false
                     slightleft = true
-                    magnitude = (x_chord - startpoint + slighttolerance) / 2
+                    magnitude = (x_chord - startpoint + slighttolerance) * unit / 110
                 }
                 else {
                     moveleft = false
